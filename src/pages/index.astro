@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Form from "../components/react/Form";
+import Comparison from "../components/react/Comparison";
+import Map from "../components/react/Map";
+---
+
+<Layout title="Home">
+	<Form client:load/>
+	<Comparison client:load/>
+	<Map client:load/>
+</Layout>
