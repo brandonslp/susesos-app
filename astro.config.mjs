@@ -5,5 +5,7 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://brandonslp.github.io',
+  base: '/susesos-app',
   integrations: [react(), tailwind()]
 });
