@@ -1,14 +1,16 @@
 import { Datepicker } from 'flowbite-react';
 import React, { useCallback, useState } from 'react';
 import dayjs from "dayjs";
-import { Autocomplete, LoadScript } from '@react-google-maps/api';
+import { Autocomplete } from '@react-google-maps/api';
 import { $route } from '../../store/RouteStore';
-import { $danger } from '../../store/DangerStore';
+import { $travelStats } from '../../store/TravelStats';
 
 const optionsAge = ["0 - 15", "16 - 20", "> 21"];
 const optionsVehicle = ["Auto", "Moto", "Bus", "Bicicleta"];
 const optionsTime = ["00:00 - 05:00", "06:00 - 08:00", "09:00 - 12:00"];
 const optionsGender = ["Femenino", "Masculino", "Otro"];
+
+// TODO: Implement toast and validate reset inputs
 
 const FormComponent = () => {
   const [showExpandedInputs, setShowExpandedInputs] = useState(false);
@@ -33,9 +35,7 @@ const FormComponent = () => {
 
   const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Validate required fields
     if (searchQuery.origen && searchQuery.destino && searchQuery.fecha) {
-      // Handle form data here
       $route.setKey("origin", searchQuery.origen)
       $route.setKey("destination", searchQuery.destino)
       setStats()
@@ -50,7 +50,7 @@ const FormComponent = () => {
   }
 
   const setStats = () => {
-    $danger.setKey("danger", getRandomNumber(5, 70))
+    $travelStats.setKey("danger", getRandomNumber(5, 70))
   }
 
   const handlePlaceSelect = useCallback(

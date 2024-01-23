@@ -1,6 +1,7 @@
 import { DirectionsRenderer, GoogleMap } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
 import { $route } from '../../store/RouteStore';
+import { $travelStats } from '../../store/TravelStats';
 
 const containerStyle = {
   width: '100%',
@@ -22,13 +23,18 @@ const Map = () => {
     setRoute({origin: r.origin, destination: r.destination})
   })
 
+  const setStats = (distance: number) => {
+    $travelStats.setKey("distance", parseFloat(distance+"").toFixed(2))
+  }
+
   const directionsCallback = (response: any) => {
     if (response !== null) {
       if (response.status === "OK") {
-        // Dibujar la ruta en el mapa
         setDirections(response);
         if (response.routes && response.routes[0] && response.routes[0].legs) {
-          const firstLeg = response.routes[0].legs[0];
+          const route = response.routes[0]
+          setStats(route.legs[0].distance.value/1000)
+          const firstLeg = route.legs[0];
           if (firstLeg && firstLeg.start_location) {
             setCenter({
               lat: firstLeg.start_location.lat(),
