@@ -1,11 +1,13 @@
 import { map } from "nanostores"
 
 export interface TravelStats {
-  danger: number
-  distance: string
+  distance1: number
+  distance2: number
+  distance3: number
 }
 
 export const $travelStats = map<TravelStats>({
-  danger: 10,
-  distance: "0"
+  distance1: 0,
+  distance2: 0,
+  distance3: 0,
 })

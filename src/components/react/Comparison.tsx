@@ -1,26 +1,56 @@
 // src/components/ExpandableLists.js
 import { useState } from "react";
-import List from "./List";
+import StatsCard from "./StatsCard"
 import { $travelStats } from "../../store/TravelStats";
+import { $isOpenStatsContainer } from "../../store/StatsStore";
 
 const Comparison = () => {
 
-  const list1Items = ['Item 1', 'Item 2', 'Item 3'];
-  const list2Items = ['Item 1', 'Item 2', 'Item 3'];
-
-  const [danger, setDanger] = useState("-");
-  const [distance, setDistance] = useState("-");
-
-  $travelStats.listen(value => setDanger(value.danger.toString()+" %"));
-  
-  $travelStats.listen(value => setDistance(value.distance.toString()));
-
+  const [IsStatsOpen, setStatsOpen] = useState(false);
+  $isOpenStatsContainer.listen((value)=>setStatsOpen(value))
+  const [distance1, setDistance1] = useState(0)
+  const [distance2, setDistance2] = useState(0)
+  const [distance3, setDistance3] = useState(0)
+  $travelStats.listen((value)=> {
+    setDistance1(value.distance1)
+    setDistance2(value.distance2)
+    setDistance3(value.distance3)
+  })
   return (
-    <div className="max-w-screen-lg mx-auto mt-8 p-4 bg-gray-200 rounded-lg flex space-x-4">
-      {/* <List title="Indice de peligrosidad %" items={list1Items}/>
-      <List title="Días de reposo %" items={list2Items} /> */}
-      <p>Indice de peligrosidad: {danger}</p>
-      <p>Distancia (km): {(distance == "0") ? "-" : distance}</p>
+    <div className={`max-w-screen-lg mx-auto mt-8 p-4 bg-gray-200 rounded-lg flex flex-row space-x-4 items-center justify-center  transition ${(!IsStatsOpen) ? "hidden" : ""}`}>
+
+      <StatsCard 
+        title="Tramo 1"
+        iconText=" A-B "
+        color="#F34E2A"
+        distance={distance1}
+        probability={1}
+        restDays={6}
+        severity={1}
+        type="low"
+      />
+      
+      <StatsCard
+        title="Tramo 2"
+        color="#2A5BF3"
+        iconText=" B-C "
+        distance={distance2}
+        probability={1}
+        restDays={6}
+        severity={1}
+        type="low"
+      />
+
+      <StatsCard
+        title="Tramo 3"
+        color="#C52AF3"
+        iconText=" C-D "
+        distance={distance3}
+        probability={1}
+        restDays={6}
+        severity={1}
+        type="low"
+      />
       
 
     </div>

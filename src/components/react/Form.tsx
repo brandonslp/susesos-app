@@ -5,9 +5,7 @@ import { Autocomplete } from '@react-google-maps/api';
 import { $route } from '../../store/RouteStore';
 import { $travelStats } from '../../store/TravelStats';
 
-const optionsAge = ["0 - 15", "16 - 20", "> 21"];
 const optionsVehicle = ["Auto", "Moto", "Bus", "Bicicleta"];
-const optionsTime = ["00:00 - 05:00", "06:00 - 08:00", "09:00 - 12:00"];
 const optionsGender = ["Femenino", "Masculino", "Otro"];
 
 // TODO: Implement toast and validate reset inputs
@@ -38,20 +36,11 @@ const FormComponent = () => {
     if (searchQuery.origen && searchQuery.destino && searchQuery.fecha) {
       $route.setKey("origin", searchQuery.origen)
       $route.setKey("destination", searchQuery.destino)
-      setStats()
     } else {
       alert("Please fill out required fields.");
     }
   };
 
-
-  const getRandomNumber = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  const setStats = () => {
-    $travelStats.setKey("danger", getRandomNumber(5, 70))
-  }
 
   const handlePlaceSelect = useCallback(
     (address: string|undefined, name: string) => {
@@ -214,19 +203,15 @@ const FormComponent = () => {
 
 
             <div className={`grid grid-cols-3 gap-4 content-start ${showExpandedInputs ? 'flex' : 'hidden'}`}>
-              <select
+              <input
                 name="rangoEdad"
+                type="number"
+                max={100}
                 value={searchQuery.rangoEdad}
                 onChange={handleInputChange}
                 className="p-2 border border-gray-400 rounded focus:outline-none focus:border-blue-500"
               >
-                <option value="">Rango de Edad</option>
-                {optionsAge.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              </input>
               <select
                 name="vehiculo"
                 value={searchQuery.vehiculo}
@@ -240,19 +225,15 @@ const FormComponent = () => {
                   </option>
                 ))}
               </select>
-              <select
+              <input
                 name="hora"
+                type="time"
+                step="3600" min="00:00" max="23:59" pattern="[0-2][0-9]:[0-5][0-9]"
                 value={searchQuery.hora}
                 onChange={handleInputChange}
                 className="p-2 border border-gray-400 rounded focus:outline-none focus:border-blue-500"
               >
-                <option value="">Hora</option>
-                {optionsTime.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              </input>
               <select
                 name="genero"
                 value={searchQuery.genero}
