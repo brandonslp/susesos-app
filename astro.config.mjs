@@ -8,7 +8,7 @@ export default defineConfig({
   site: 'https://brandonslp.github.io',
   vite: {
     ssr: {
-      noExternal: ["react-icons"],
+      noExternal: ["react-icons", "@mui/*", "@emotion/*"],
     },
   },
   base: '/susesos-app',

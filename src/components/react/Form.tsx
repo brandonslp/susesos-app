@@ -3,7 +3,6 @@ import React, { useCallback, useState } from 'react';
 import dayjs from "dayjs";
 import { Autocomplete } from '@react-google-maps/api';
 import { $route } from '../../store/RouteStore';
-import { $travelStats } from '../../store/TravelStats';
 
 const optionsVehicle = ["Auto", "Moto", "Bus", "Bicicleta"];
 const optionsGender = ["Femenino", "Masculino", "Otro"];
