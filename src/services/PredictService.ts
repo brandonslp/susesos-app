@@ -21,7 +21,7 @@ export class PredictService {
           "accident_latitude": destination[0], // TODO remove
           "destination_longitude": destination[1],
           "destination_latitude": destination[0],
-          "vehicle_type": "Bicicleta/Scooter" // TODO validate
+          "vehicle_type": item.vehicle_type
         })
       })
       const response = await axios.post(

@@ -10,7 +10,15 @@ import { $predictInput } from '../../store/PrecitInputStore';
 
 
 const genders = ["M", "F"];
-const vehicle_types = ["Auto", "Moto", "Bus", "Bicicleta"];
+const vehicle_types = ["Bicicleta/Scooter",
+  "Automóvil/Camioneta",
+  "Microbus/Bus/Furgón",
+  "Motocicleta",
+  "No identificado",
+  "Taxi/Colectivo",
+  "Camión",
+  "Vehiculo no identificado",
+  "Tren/Metro/Metrotren"];
 
 const Form: React.FC = () => {
   const [showSecondRow, setShowSecondRow] = useState(false);
@@ -107,8 +115,8 @@ const Form: React.FC = () => {
 
 
   return (
-    <div className="container mx-auto mt-8 ">
-      <form noValidate onSubmit={handleSubmit} onChange={handleOnChange} className="container max-w-screen-lg mx-auto  rounded-lg flex flex-col">
+    <div className="container mx-auto mt-8">
+      <form noValidate onSubmit={handleSubmit} onChange={handleOnChange} className="max-w-screen-lg mx-auto  rounded-lg flex flex-col">
         <div className="grid sm:grid-cols-1 lg:grid-cols-3 md:gap-20 justify-center m-auto">
           <div className="mb-4">
             <Autocomplete
@@ -128,7 +136,7 @@ const Form: React.FC = () => {
                 value={formValues.origin.value}
                 error={formValues.origin.error}
                 helperText={formValues.origin.error && formValues.origin.errorMessage}
-            />
+              />
             </Autocomplete>
           </div>
           <div className="mb-4">
@@ -156,11 +164,11 @@ const Form: React.FC = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 name="datetime"
-                label="Fecha y hora *"
+                label="Fecha y hora"
                 ampm={false}
                 disablePast
                 slotProps={{ textField: { size: "small", className: "w-56", required: true, error: formValues.datetime.error, helperText: formValues.datetime.error && formValues.datetime.errorMessage } }}
-                value={formValues.datetime.value}
+                value={(formValues.datetime.value !== "") ? formValues.datetime.value : null }
                 onChange={handleOnChange}
               />
             </LocalizationProvider>
@@ -205,11 +213,13 @@ const Form: React.FC = () => {
             </TextField>
           </div>
         </div>
-        <div className="flex gap-16">
-          <Button className="flex-auto w-5" variant="outlined" onClick={toggleSecondRow}>
+        <div className="flex justify-center items-center md:gap-36 sm:gap-4">
+          <Button className="md:w-1/4" variant="outlined" onClick={toggleSecondRow}>
             {showSecondRow ? 'Menos datos' : 'Más datos'}
           </Button>
-          <Button type="submit" className="flex-auto w-5" variant="contained">Enviar</Button>
+          <Button className="md:w-1/4" type="submit" variant="contained">
+            Enviar
+          </Button>
         </div>
       </form>
     </div>
