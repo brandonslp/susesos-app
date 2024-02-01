@@ -10,6 +10,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Avatar from '@mui/material/Avatar';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 
 export interface Props {
@@ -19,7 +20,6 @@ export interface Props {
   severity: number
   restDays: number
   probability: number
-  type: string
   color: string
 }
 
@@ -33,7 +33,7 @@ const getLabel = (severity: number): string => {
 }
 
 
-const StatsCard = ({title, color, iconText, distance, severity, restDays, probability, type}: Props) => {
+const StatsCard = ({title, color, iconText, distance, severity, restDays, probability}: Props) => {
   return (
     <Card className="basis-1/4">
       <CardHeader avatar={
@@ -45,9 +45,9 @@ const StatsCard = ({title, color, iconText, distance, severity, restDays, probab
         <List>
           <ListItem>
             <ListItemIcon>
-              <CrisisAlert />
+              <BarChartIcon />
             </ListItemIcon>
-            <ListItemText primary={"Probalidad: " + probability + "%"} />
+            <ListItemText primary={"Probalidad: " + (probability * 100) + "%"} />
           </ListItem>
           <ListItem>
             <ListItemIcon>
@@ -59,13 +59,7 @@ const StatsCard = ({title, color, iconText, distance, severity, restDays, probab
             <ListItemIcon>
               <CrisisAlert />
             </ListItemIcon>
-            <ListItemText primary={"Complejidad: " + getLabel(severity)} />
-          </ListItem>
-          <ListItem className="hidden">
-            <ListItemIcon>
-              <CrisisAlert />
-            </ListItemIcon>
-            <ListItemText primary={"Tipo: " + type} />
+            <ListItemText primary={"Severidad: " + getLabel(severity)} />
           </ListItem>
         </List>
       </CardContent>

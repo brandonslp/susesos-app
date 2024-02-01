@@ -1,8 +1,11 @@
 import { DirectionsRenderer, GoogleMap, Marker } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
-import { $route } from '../../store/RouteStore';
-import { $travelStats, type TravelStats } from '../../store/TravelStats';
+import { $predictInput } from '../../store/PrecitInputStore';
+import { $predictOutputComplete, type PredictCompleteOutput } from '../../store/PredictOutputStore';
 import { $isOpenStatsContainer } from '../../store/StatsStore';
+import type { PredictInput } from '../../types/PredictInput';
+import { PredictService } from '../../services/PredictService';
+import type { PredictOutput } from '../../types/PredictOutput';
 
 const containerStyle = {
   width: '100%',
@@ -14,18 +17,22 @@ const zoom = 15;
 let mapRef: google.maps.Map | null = null;
 
 const Map = () => {
-
+  const predictService = new PredictService()
   const [directions, setDirections] = useState<google.maps.DirectionsResult | undefined>(undefined);
   const [center, setCenter] = useState({ lat: -33.4489, lng: -70.6693 });
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [route, setRoute] = useState<Route>({ origin: "", destination: "" });
+  const [toPredict, setToPredict] = useState<PredictInput>();
 
-  $route.listen((r) => {
-    setRoute({origin: r.origin, destination: r.destination})
+  $predictInput.listen((r) => {
+    setToPredict(r)
   })
 
-  const setDistance = (key: keyof TravelStats, value: number) => {
-    $travelStats.setKey(key, value)
+  const setPredictOuput = (output: PredictOutput[]) => {
+    $predictOutputComplete.set({
+      segment1: output[0],
+      segment2: output[1],
+      segment3: output[2],
+    })
   }
 
   const setStatsOpenContainer = (value: boolean) => {
@@ -36,7 +43,6 @@ const Map = () => {
     if (response !== null) {
       if (response.status === "OK") {
         setDirections(response);
-        setStatsOpenContainer(true)
         if (response.routes && response.routes[0] && response.routes[0].legs) {
           const route = response.routes[0]
           const firstLeg = route.legs[0];
@@ -54,26 +60,26 @@ const Map = () => {
   };
 
   useEffect(() => {
-    if (route.origin && route.destination) {
+    if (toPredict?.origin && toPredict?.destination) {
       const directionsService = new window.google.maps.DirectionsService();
 
       directionsService.route(
         {
-          origin: route.origin,
-          destination: route.destination,
+          origin: toPredict.origin,
+          destination: toPredict.destination,
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
         directionsCallback
       );
     }
-  }, [route, mapLoaded]);
+  }, [toPredict, mapLoaded]);
 
   const handleMapLoad = (map: google.maps.Map) => {
     mapRef = map;
     setMapLoaded(true);
   };
 
-  const renderSegment = (id: keyof TravelStats,startIdx: number, endIdx: number, color: string, originLabel: string, destinationLabel: string) => {
+  const renderSegment = (id: string,startIdx: number, endIdx: number, color: string, originLabel: string, destinationLabel: string) => {
     if (!directions || !directions.routes || !directions.routes[0] || !directions.routes[0].legs) {
       return null;
     }
@@ -89,7 +95,6 @@ const Map = () => {
     const startLocation = segmentSteps.length > 0 ? segmentSteps[0].start_location : { lat: 0, lng: 0 };
     const endLocation = segmentSteps.length > 0 ? segmentSteps[segmentSteps.length - 1].end_location : { lat: 0, lng: 0 };
 
-    setDistance(id, segmentDistance)
     
     const distanceObj: google.maps.Distance = {
       text: `${segmentDistance} km`,
@@ -114,8 +119,8 @@ const Map = () => {
       via_waypoints: [],
     };
 
-    return (
-      <>
+    return {
+      component: <>
         <DirectionsRenderer
           options={{
             polylineOptions: {
@@ -135,10 +140,11 @@ const Map = () => {
             ],
           }}
         />
-        <Marker position={startLocation} label={originLabel}/>
+        <Marker position={startLocation} label={originLabel} />
         <Marker position={endLocation} label={destinationLabel} />
-      </>
-    );
+      </>,
+      leg: dummyLeg 
+    };
   };
 
   function getRandomColor() {
@@ -149,7 +155,87 @@ const Map = () => {
     }
     return color;
   }
+  
+  function buildSegments(){
+    if(!directions){
+      return (<></>)
+    } else {
+      const segment1 = renderSegment("distance1", 0, Math.ceil(directions.routes[0].legs.flatMap((leg) => leg.steps).length / 3), "#F34E2A", "A", "B")
+      const segment2 = renderSegment(
+        "distance2",
+        Math.ceil(directions.routes[0].legs.flatMap((leg) => leg.steps).length / 3),
+        Math.ceil((2 * directions.routes[0].legs.flatMap((leg) => leg.steps).length) / 3),
+        "#2A5BF3", "B", "C"
+      )
+      const segment3 = renderSegment(
+        "distance3",
+        Math.ceil((2 * directions.routes[0].legs.flatMap((leg) => leg.steps).length) / 3),
+        directions.routes[0].legs.flatMap((leg) => leg.steps).length,
+        "#C52AF3", "C", "D"
+      )
+      
+      const predictInput: PredictInput[] = [
+        {
+          age: toPredict?.age || 0,
+          gender: toPredict?.gender || "",
+          destination: segment1?.leg.end_location.toString() || "",
+          origin: segment1?.leg?.start_location.toString() || "",
+          timestamp: toPredict?.timestamp || "",
+          vehicle_type: toPredict?.vehicle_type || "",
+        },
+        {
+          age: toPredict?.age || 0,
+          gender: toPredict?.gender || "",
+          destination: segment2?.leg.end_location.toString() || "",
+          origin: segment2?.leg?.start_location.toString() || "",
+          timestamp: toPredict?.timestamp || "",
+          vehicle_type: toPredict?.vehicle_type || "",
+        },
+        {
+          age: toPredict?.age || 0,
+          gender: toPredict?.gender || "",
+          destination: segment3?.leg.end_location.toString() || "",
+          origin: segment3?.leg?.start_location.toString() || "",
+          timestamp: toPredict?.timestamp || "",
+          vehicle_type: toPredict?.vehicle_type || "",
+        }
+      ];
+      const distances: number[] = [
+        segment1?.leg?.distance?.value ?? 0,
+        segment2?.leg?.distance?.value ?? 0, 
+        segment3?.leg?.distance?.value ?? 0
+      ]
+      predict(predictInput, distances)
 
+      return (
+        <>
+          {segment1?.component}
+          {segment2?.component}
+          {segment3?.component}
+        </>
+      )
+    }
+  }
+
+  function predict(input: PredictInput[], distances: number[]){
+    predictService.predict(input).then((result: any[]) => {
+      const buildedOutput: PredictOutput[] = []
+      result.forEach((item, index) => {
+        buildedOutput.push({
+          id: item.id,
+          probability: item.probability,
+          restdays: item.restdays,
+          severity: item.severity,
+          type: item.type,
+          distance: distances[index]
+        })
+      })
+      setPredictOuput(buildedOutput)
+      setStatsOpenContainer(true)
+    }).catch((err) => console.error(err))
+  }
+
+  
 
   return (
     <div className="max-w-screen-lg mx-auto mt-8 p-4 bg-gray-200 rounded-lg">
@@ -157,19 +243,7 @@ const Map = () => {
         {mapLoaded &&
           directions && (
             <>
-            {renderSegment("distance1", 0, Math.ceil(directions.routes[0].legs.flatMap((leg) => leg.steps).length / 3), "#F34E2A", "A", "B")}
-              {renderSegment(
-                "distance2",
-                Math.ceil(directions.routes[0].legs.flatMap((leg) => leg.steps).length / 3),
-                Math.ceil((2 * directions.routes[0].legs.flatMap((leg) => leg.steps).length) / 3),
-                "#2A5BF3", "B", "C"
-              )}
-              {renderSegment(
-                "distance3",
-                Math.ceil((2 * directions.routes[0].legs.flatMap((leg) => leg.steps).length) / 3),
-                directions.routes[0].legs.flatMap((leg) => leg.steps).length,
-                "#C52AF3", "C", "D"
-              )}
+            {buildSegments()}
             </>
           )}
       </GoogleMap>
