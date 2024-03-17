@@ -61,7 +61,7 @@ const StatsCard = ({title, color, iconText, distance, severity, restDays, probab
             </Avatar>
           }
           title={title}
-          subheader={distance + " km"}
+          subheader={toFixed(distance) + " km"}
           style={{ paddingBottom: "1px" }}
         />
       </Box>
