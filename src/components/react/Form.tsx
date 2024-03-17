@@ -64,10 +64,12 @@ const Form: React.FC = () => {
     e.preventDefault();
     let newFormValues = { ...formValues };
     const formFields = Object.keys(formValues)
+    let flag = true;
     for (let index = 0; index < formFields.length; index++) {
       const currentField: string = formFields[index];
       const currentValue = formValues[currentField].value
       if (currentValue === "") {
+        flag = false;
         newFormValues = {
           ...newFormValues,
           [currentField]: {
@@ -79,7 +81,8 @@ const Form: React.FC = () => {
       }
     }
     setFormValues(newFormValues);
-    setToPredict(newFormValues);
+    if (flag) 
+      setToPredict(newFormValues);
   };
 
   const handleOnChange = (e: any) => {
@@ -88,7 +91,8 @@ const Form: React.FC = () => {
       ...formValues,
       [name]: {
         ...formValues[name],
-        value
+        value,
+        error: (value.toString().length == 0)
       }
     })
   }

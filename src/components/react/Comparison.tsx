@@ -1,4 +1,3 @@
-// src/components/ExpandableLists.js
 import { useState } from "react";
 import StatsCard from "./StatsCard"
 import { $predictOutputComplete } from "../../store/PredictOutputStore";
