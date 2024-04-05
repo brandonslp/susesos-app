@@ -6,6 +6,8 @@ import { $isOpenStatsContainer } from '../../store/StatsStore';
 import type { PredictInput } from '../../types/PredictInput';
 import { PredictService } from '../../services/PredictService';
 import type { PredictOutput } from '../../types/PredictOutput';
+import { StaticService } from '../../services/StaticService';
+import { $probability } from '../../store/Probability';
 
 const containerStyle = {
   width: '100%',
@@ -18,6 +20,7 @@ let mapRef: google.maps.Map | null = null;
 
 const Map = () => {
   const predictService = new PredictService()
+  const staticService = new StaticService()
   const [directions, setDirections] = useState<google.maps.DirectionsResult | undefined>(undefined);
   const [center, setCenter] = useState({ lat: -33.4489, lng: -70.6693 });
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -155,11 +158,28 @@ const Map = () => {
     }
     return color;
   }
+
+  async function getProbability(origin: string, destination: string){
+    const originComune = origin.split(",")[0]
+    const destinationComune = destination.split(",")[0]
+    const vehicle_type = toPredict?.vehicle_type || "";
+    const age = toPredict?.age || 0;
+    const gender = toPredict?.gender || "";
+    const probaility = await staticService.request(
+      originComune,
+      destinationComune,
+      vehicle_type,
+      age,
+      gender
+    )
+    $probability.set(probaility)
+  }
   
   function buildSegments(){
     if(!directions){
       return (<></>)
     } else {
+      getProbability(directions.routes[0].legs[0].start_address, directions.routes[0].legs[0].end_address)
       const segment1 = renderSegment("distance1", 0, Math.ceil(directions.routes[0].legs.flatMap((leg) => leg.steps).length / 3), "#F34E2A", "A", "B")
       const segment2 = renderSegment(
         "distance2",
@@ -171,7 +191,7 @@ const Map = () => {
         "distance3",
         Math.ceil((2 * directions.routes[0].legs.flatMap((leg) => leg.steps).length) / 3),
         directions.routes[0].legs.flatMap((leg) => leg.steps).length,
-        "#C52AF3", "C", "D"
+        "#46183d", "C", "D"
       )
       
       const predictInput: PredictInput[] = [

@@ -3,11 +3,19 @@ import StatsCard from "./StatsCard"
 import { $predictOutputComplete } from "../../store/PredictOutputStore";
 import { $isOpenStatsContainer } from "../../store/StatsStore";
 import type { PredictOutput } from "../../types/PredictOutput";
+import { $probability } from "../../store/Probability";
+import Chip from '@mui/material/Chip';
 
 const Comparison = () => {
 
+  function toFixed(numero: number) {
+    return parseFloat(numero.toFixed(2));
+  }
+
   const [IsStatsOpen, setStatsOpen] = useState(false);
+  const [probability, setProbability] = useState(NaN)
   $isOpenStatsContainer.listen((value)=>setStatsOpen(value))
+  $probability.listen((value)=>setProbability(value))
   const [segment1, setSegment1] = useState<PredictOutput>()
   const [segment2, setSegment2] = useState<PredictOutput>()
   const [segment3, setSegment3] = useState<PredictOutput>()
@@ -20,6 +28,9 @@ const Comparison = () => {
     <div className={`max-w-screen-lg mx-auto bg-gray-200 rounded-lg  transition-all duration-300 ${(!IsStatsOpen) ? "opacity-0 max-h-0 overflow-hidden m-0 p-0" : "opacity-100 max-h-96 mt-8 p-4"}`}>
       <div className="flex flex-row space-x-4 items-center justify-center">
         <h4 className="text-2xl text-gray-800 mb-2">Accidentabilidad</h4>
+      </div>
+      <div className="flex flex-row space-x-4 items-center justify-center mb-2">
+        <Chip label={`Probabilidad Comparativa: ${toFixed(probability || 0)} `} size="small" color="secondary" />
       </div>
       <div className="flex flex-row space-x-4 items-center justify-center">
         <StatsCard
@@ -44,7 +55,7 @@ const Comparison = () => {
 
         <StatsCard
           title="Tramo 3"
-          color="#C52AF3"
+          color="#46183d"
           iconText=" C-D "
           distance={segment3?.distance ?? 0}
           probability={segment3?.probability ?? 0}
