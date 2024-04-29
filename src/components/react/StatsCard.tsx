@@ -34,7 +34,7 @@ const getLabel = (severity: number): string => {
 
 
 function toFixed(numero: number) {
-  return parseFloat(numero.toFixed(2));
+  return parseFloat(numero.toFixed(4));
 }
 
 function getDangerLabel(probability: number): JSX.Element{

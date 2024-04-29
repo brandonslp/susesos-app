@@ -9,7 +9,7 @@ import Chip from '@mui/material/Chip';
 const Comparison = () => {
 
   function toFixed(numero: number) {
-    return parseFloat(numero.toFixed(2));
+    return parseFloat(numero.toFixed(4));
   }
 
   const [IsStatsOpen, setStatsOpen] = useState(false);
