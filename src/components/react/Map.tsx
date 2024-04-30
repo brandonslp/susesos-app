@@ -163,7 +163,7 @@ const Map = () => {
     let second = commune.split(" ")
     if ( second.length > 1) {
       if(!Number.isNaN(Number(second[0]))){
-        commune = commune.split(" ")[1]
+        commune = commune.split(" ").slice(1).join(" ")
       }
     }
     return commune.trim() 
