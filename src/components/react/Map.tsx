@@ -160,6 +160,12 @@ const Map = () => {
 
   function getCommuneName(address: string): string {
     let commune = address.split(",")[1].trim()
+    let second = commune.split(" ")
+    if ( second.length > 1) {
+      if(!Number.isNaN(second[0])){
+        commune = commune.split(" ")[1]
+      }
+    }
     return commune.trim() 
   }
 
