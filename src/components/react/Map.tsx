@@ -86,7 +86,6 @@ const Map = () => {
     if (!directions || !directions.routes || !directions.routes[0] || !directions.routes[0].legs) {
       return null;
     }
-
     const route = directions.routes[0];
     const steps = route.legs.flatMap((leg) => leg.steps);
     const segmentSteps = steps.slice(startIdx, endIdx);
@@ -159,9 +158,17 @@ const Map = () => {
     return color;
   }
 
+  function getCommuneName(address: string): string {
+    let commune = address.split(",")[1].trim()
+    if (commune.split(" ").length > 1) {
+      commune = commune.split(" ")[1]
+    }
+    return commune.trim()
+  }
+
   async function getProbability(origin: string, destination: string){
-    const originComune = origin.split(",")[0]
-    const destinationComune = destination.split(",")[0]
+    const originComune = getCommuneName(origin)
+    const destinationComune = getCommuneName(destination)
     const vehicle_type = toPredict?.vehicle_type || "";
     const age = toPredict?.age || 0;
     const gender = toPredict?.gender || "";
