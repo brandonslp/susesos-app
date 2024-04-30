@@ -170,8 +170,9 @@ const Map = () => {
   }
 
   async function getProbability(origin: string, destination: string){
-    const originComune = getCommuneName(origin)
-    const destinationComune = getCommuneName(destination)
+    
+    const originComune = staticService.getCommune(toPredict?.origin || "")
+    const destinationComune = staticService.getCommune(toPredict?.destination || "")
     const vehicle_type = toPredict?.vehicle_type || "";
     const age = toPredict?.age || 0;
     const gender = toPredict?.gender || "";
@@ -180,7 +181,8 @@ const Map = () => {
       destinationComune,
       vehicle_type,
       age,
-      gender
+      gender,
+      toPredict?.timestamp || ""
     )
     $probability.set(probaility)
   }

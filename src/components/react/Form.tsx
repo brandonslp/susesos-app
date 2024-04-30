@@ -101,6 +101,7 @@ const Form: React.FC = () => {
     (address: string | undefined, name: string) => {
       const newFormValues = { ...formValues };
       newFormValues[name].value = address;
+      
       setFormValues(newFormValues);
     },
     []
@@ -126,6 +127,7 @@ const Form: React.FC = () => {
             <Autocomplete
               onLoad={(autocomplete) => {
                 autocomplete.addListener('place_changed', () => {
+                  console.log('place changed', autocomplete, autocomplete.getPlace(), autocomplete.getPlace().formatted_address)
                   const place = autocomplete.getPlace();
                   handlePlaceSelect(place.formatted_address, 'origin');
                 });
