@@ -160,10 +160,7 @@ const Map = () => {
 
   function getCommuneName(address: string): string {
     let commune = address.split(",")[1].trim()
-    if (commune.split(" ").length > 1) {
-      commune = commune.split(" ")[1]
-    }
-    return commune.trim()
+    return commune.trim() 
   }
 
   async function getProbability(origin: string, destination: string){

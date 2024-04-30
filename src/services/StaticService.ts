@@ -1,9 +1,63 @@
 
 import axios from "axios";
+import * as levenshtein from "fastest-levenshtein"
 
 export class StaticService {
 
   private URL = "https://nostradamusapp-1599c3bbbbe2.herokuapp.com/api/probability"
+  private communes = [
+    "Vitacura",
+    "Til Til",
+    "Santiago",
+    "San Ramón",
+    "San Pedro",
+    "San Miguel",
+    "San José de Maipo",
+    "San Joaquín",
+    "San Bernardo",
+    "Renca",
+    "Recoleta",
+    "Quinta Normal",
+    "Quilicura",
+    "Puente Alto",
+    "Pudahuel",
+    "Providencia",
+    "Pirque",
+    "Peñalolén",
+    "Peñaflor y Talagante",
+    "Pedro Aguirre Cerda",
+    "Paine",
+    "Padre Hurtado",
+    "Ñuñoa",
+    "Melipilla",
+    "María Pinto",
+    "Maipú",
+    "Macul",
+    "Lo Prado",
+    "Lo Espejo",
+    "Lo Barnechea",
+    "Las Condes",
+    "Lampa",
+    "La Reina",
+    "La Pintana",
+    "La Granja",
+    "La Florida",
+    "La Cisterna",
+    "Isla de Maipo",
+    "Independencia",
+    "Huechuraba",
+    "Estación Central",
+    "El Monte",
+    "El Bosque",
+    "Curacaví",
+    "Conchalí",
+    "Colina",
+    "Cerro Navia",
+    "Cerrillos",
+    "Calera de Tango",
+    "Buin",
+    "Alhué",
+  ];
 
   async request(origin: string, destination: string, vehicle_type: string, age: number, gender: string): Promise<number> {
 
@@ -22,9 +76,9 @@ export class StaticService {
       if(response.data.probability && response.data.probability){
         return response.data.probability / 100
       }
-      return 0;
+      return response.data.probability;
     } catch (error) {
-      return 0;
+      return -1;
     }
 
   }
@@ -34,5 +88,8 @@ export class StaticService {
     return intervals.find(interval => interval > number)
   }
 
+  getCommune(address: string): string {
+    return levenshtein.closest(address, this.communes)
+  }
 
 }

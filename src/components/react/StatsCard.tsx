@@ -25,9 +25,9 @@ export interface Props {
 
 const getLabel = (severity: number): string => {
   const labels: { [key: string]: string } = {
-    "1": "Baja",
-    "2": "Media",
-    "3": "Alta"
+    "0": "Baja",
+    "1": "Media",
+    "2": "Alta"
   }
   return labels[String(severity)] ?? labels["1"]
 }
@@ -66,12 +66,15 @@ const StatsCard = ({title, color, iconText, distance, severity, restDays, probab
         />
       </Box>
       <CardContent style={{paddingTop:"2px"}}>
+        <div className='flex justify-center mt-3'>
+          <Chip label="Accidentabilidad" size="small" />
+        </div>
         <List>
           <ListItem>
             <ListItemIcon>
               <BarChartIcon />
             </ListItemIcon>
-            <ListItemText primary={"Probalidad: " + toFixed(probability * 100) + "%"} />
+            <ListItemText primary={"Probabilidad: " + toFixed(probability * 100) + "%"} />
           </ListItem>
           <ListItem>
             <ListItemIcon>
