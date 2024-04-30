@@ -21,7 +21,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Typography } from '@mui/material';
 
 
-const table = {
+const table: any = {
 	'vehiculo_paciente': {
 		'referencia': 'Automóvil/Camioneta',
 		'opciones': [
@@ -86,8 +86,7 @@ const table = {
 	},
 }
 
-const maps = {
-  'dia_semana': {
+const maps_semana: Record<number,string> = {
     0: 'Lunes',
     1: 'Martes',
     2: 'Miércoles',
@@ -95,18 +94,20 @@ const maps = {
     4: 'Viernes',
     5: 'Sábado',
     6: 'Domingo'
-  },
-  'periodo': {
+  };
+const maps_periodo: Record<string, string> = {
     'morning_peak': '06:00 - 10:00',
     'valley': '10:00 - 13:00 / 15:00 - 18:00',
     'lunch': '13:00 - 15:00',
     'afternoon_peak': '18:00 - 21:00',
     'night': '21:00 - 06:00'
-  }
 }
 
+interface NumberWithArrowProps {
+  number: number;
+}
 
-function delta_gravedad(categoria, column){
+function delta_gravedad(categoria: string, column: any){
   if (column === null) {
     return [];
   }
@@ -119,13 +120,13 @@ function delta_gravedad(categoria, column){
 	let delta = 0
   const referencia = rows.referencia
 	if(referencia != column){
-		delta = rows.opciones.find(o => o[0] == column)
-    if(delta)
-      delta = delta[1]
+		const deltas = rows.opciones.find((o: any) => o[0] == column)
+    if(deltas)
+      delta = deltas[1]
     else return [];
   }
 
-	return rows.opciones.map(row => {
+	return rows.opciones.map((row: any) => {
         const x = row[0];
         const y = row[1] - delta;
         return [x === column ? referencia : x, x === column ? -delta : y];
@@ -138,13 +139,13 @@ const Comparison = () => {
   function toFixed(numero: number) {
     return parseFloat(numero.toFixed(4));
   }
-  function NumberWithArrow({ number }) {
+  function NumberWithArrow({ number }: NumberWithArrowProps) {
     const isUp = number>0;
   
     return (
       <Typography component="span" sx={{ display: 'flex', alignItems: 'center', color: isUp ? 'red' : 'green' }}>
         {isUp ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
-        {number}
+        {!isNaN(number)?Math.round(number*10)/10:""}
       </Typography>
     );
   }
@@ -177,10 +178,10 @@ const Comparison = () => {
       dia_semana: delta_gravedad('day_of_week', staticService.getDayOfWeek(r.timestamp)),
       periodo: delta_gravedad('day_period', staticService.getDayPeriod(r.timestamp)),
     }
-    gravedades.age.sort((a, b) => a[1] - b[1])
-    gravedades.vehiculo.sort((a, b) => a[1] - b[1])
-    gravedades.dia_semana.sort((a, b) => a[1] - b[1])
-    gravedades.periodo.sort((a, b) => a[1] - b[1])
+    gravedades.age.sort((a: any[], b: any[]) => a[1] - b[1])
+    gravedades.vehiculo.sort((a: any[], b: any[]) => a[1] - b[1])
+    gravedades.dia_semana.sort((a: any[], b: any[]) => a[1] - b[1])
+    gravedades.periodo.sort((a: any[], b: any[]) => a[1] - b[1])
     setSeverities(gravedades)
   })
 
@@ -219,7 +220,7 @@ const Comparison = () => {
             <TableBody>
               <TableRow>
                 <TableCell sx={{verticalAlign: 'top'}}>
-                  {severities.vehiculo?severities.vehiculo.map((x) => {
+                  {severities.vehiculo?severities.vehiculo.map((x: any[]) => {
                     return <div style={{display: "flex"}}>
                         <div style={{flex: "0 0 60px"}}><NumberWithArrow number={x[1].toFixed(1)} /></div>
                         <div style={{flex: "1 1"}}>
@@ -229,7 +230,7 @@ const Comparison = () => {
                   }):null}
                 </TableCell>
                 <TableCell sx={{verticalAlign: 'top'}}>
-                  {severities.vehiculo?severities.genero.map((x) => {
+                  {severities.vehiculo?severities.genero.map((x: any[]) => {
                     return <div style={{display: "flex"}}>
                         <div style={{flex: "0 0 60px"}}><NumberWithArrow number={x[1].toFixed(1)} /></div>
                         <div style={{flex: "1 1"}}>
@@ -239,27 +240,27 @@ const Comparison = () => {
                   }):null}
                 </TableCell>
                 <TableCell sx={{verticalAlign: 'top'}}>
-                  {severities.vehiculo?severities.dia_semana.map((x) => {
+                  {severities.vehiculo?severities.dia_semana.map((x: [number, number]) => {
                     return <div style={{display: "flex"}}>
-                        <div style={{flex: "0 0 60px"}}><NumberWithArrow number={x[1].toFixed(1)} /></div>
+                        <div style={{flex: "0 0 60px"}}><NumberWithArrow number={x[1]} /></div>
                         <div style={{flex: "1 1"}}>
-                          <Typography component="span" sx={{ display: 'flex', alignItems: 'center' }}>{maps.dia_semana[x[0]]}</Typography>
+                          <Typography component="span" sx={{ display: 'flex', alignItems: 'center' }}>{maps_semana[x[0]]}</Typography>
                         </div>
                       </div>
                   }):null}
                 </TableCell>
                 <TableCell sx={{verticalAlign: 'top'}}>
-                  {severities.vehiculo?severities.periodo.map((x) => {
+                  {severities.vehiculo?severities.periodo.map((x: [string, number]) => {
                     return <div style={{display: "flex"}}>
-                        <div style={{flex: "0 0 60px"}}><NumberWithArrow number={x[1].toFixed(1)} /></div>
+                        <div style={{flex: "0 0 60px"}}><NumberWithArrow number={x[1]} /></div>
                         <div style={{flex: "1 1"}}>
-                          <Typography component="span" sx={{ display: 'flex', alignItems: 'center' }}>{maps.periodo[x[0]]}</Typography>
+                          <Typography component="span" sx={{ display: 'flex', alignItems: 'center' }}>{maps_periodo[x[0]]}</Typography>
                         </div>
                       </div>
                   }):null}
                 </TableCell>
                 <TableCell sx={{verticalAlign: 'top'}}>
-                  {severities.vehiculo?severities.age.map((x) => {
+                  {severities.vehiculo?severities.age.map((x: any[]) => {
                     return <div style={{display: "flex"}}>
                         <div style={{flex: "0 0 60px"}}><NumberWithArrow number={x[1].toFixed(1)} /></div>
                         <div style={{flex: "1 1"}}>

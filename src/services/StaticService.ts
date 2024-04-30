@@ -102,7 +102,7 @@ export class StaticService {
       return null;
     }
   }
-  getDayPeriod(timestamp: string){
+  getDayPeriod(timestamp: string): string | null{
     if(timestamp){
       const date = new Date(timestamp);
       const hour = date.getHours();
