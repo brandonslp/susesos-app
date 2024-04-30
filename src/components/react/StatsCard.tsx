@@ -74,7 +74,7 @@ const StatsCard = ({title, color, iconText, distance, severity, restDays, probab
             <ListItemIcon>
               <BarChartIcon />
             </ListItemIcon>
-            <ListItemText primary={"Probabilidad: " + toFixed(probability) + "%"} />
+            <ListItemText primary={"Probabilidad: " + toFixed(probability * 100) + "%"} />
           </ListItem>
           <ListItem>
             <ListItemIcon>
