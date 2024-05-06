@@ -19,6 +19,7 @@ import { StaticService } from "../../services/StaticService";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Typography } from '@mui/material';
+import Toolbar from '@mui/material/Toolbar';
 
 
 const table: any = {
@@ -195,7 +196,7 @@ const Comparison = () => {
   })
   return (
     <Box>
-      <div className={`max-w-screen-lg mx-auto bg-gray-200 rounded-lg  transition-all duration-300 ${(!IsStatsOpen) ? "opacity-0 max-h-0 overflow-hidden m-0 p-0" : "opacity-100 max-h-96 mt-8 p-4"}`}>
+      <div className={`max-w-screen-lg mx-auto bg-gray-200 rounded-lg  transition-all duration-300 ${(!IsStatsOpen) ? "opacity-0 max-h-0 overflow-hidden m-0 p-0" : "opacity-100 mt-8 p-4"}`}>
         <div className="flex flex-row space-x-4 items-center justify-center">
           <h4 className="text-2xl text-gray-800 mb-2">Modelo teórico de análisis de probabilidad (regresión binomial negativa)</h4>
         </div>
@@ -206,8 +207,19 @@ const Comparison = () => {
         
         </div>
         <div>
+          <Toolbar>
+            <Typography
+              sx={{ flex: '1 1 100%' }}
+              variant="h6"
+              id="tableTitle"
+              component="div"
+            >
+              Diferencia de severidad en terminos de días de reposo
+            </Typography>
+          </Toolbar>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              
             <TableHead>
               <TableRow>
                 <TableCell>Vehículo</TableCell>
